@@ -11,6 +11,6 @@ public class Welcomer{
 		return "Hello! My status is Good";
 	}
 	public String saySomething() {
-		return "Hunter, say something!";
+		return "say something, hunter";
 	}
 }
