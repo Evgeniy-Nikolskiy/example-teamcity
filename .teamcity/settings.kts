@@ -29,23 +29,12 @@ version = "2021.2"
 project {
 
     buildType(Build)
-    buildType(Sample)
-
-    params {
-        text("name", "Alexey", readOnly = true, allowEmpty = true)
-        param("system.sample", "123")
-    }
 }
 
 object Build : BuildType({
     name = "Build"
 
-    artifactRules = "+:target/*.jar"
-
-    params {
-        param("env.name2", "%name%")
-        password("env.out", "credentialsJSON:12f2c387-f043-4357-8d37-8e00390454d0")
-    }
+    artifactRules = "+:target/.jar"
 
     vcs {
         root(DslContext.settingsRoot)
@@ -53,7 +42,7 @@ object Build : BuildType({
 
     steps {
         maven {
-            name = "run clean test"
+            name = "mvn clean test"
             executionMode = BuildStep.ExecutionMode.ALWAYS
 
             conditions {
@@ -63,7 +52,7 @@ object Build : BuildType({
             runnerArgs = "-Dmaven.test.failure.ignore=true"
         }
         maven {
-            name = "make distrib"
+            name = "mvn clean deploy"
             executionMode = BuildStep.ExecutionMode.ALWAYS
 
             conditions {
@@ -71,33 +60,12 @@ object Build : BuildType({
             }
             goals = "clean deploy"
             runnerArgs = "-Dmaven.test.failure.ignore=true"
-            userSettingsSelection = "netology"
+            userSettingsSelection = "settings_mvn"
         }
     }
 
     triggers {
         vcs {
-        }
-    }
-
-    requirements {
-        exists("env.JAVA_HOME")
-    }
-})
-
-object Sample : BuildType({
-    name = "Sample"
-
-    vcs {
-        root(DslContext.settingsRoot)
-    }
-
-    steps {
-        maven {
-            name = "run clean test"
-            executionMode = BuildStep.ExecutionMode.ALWAYS
-            goals = "clean test"
-            runnerArgs = "-Dmaven.test.failure.ignore=true"
         }
     }
 })
